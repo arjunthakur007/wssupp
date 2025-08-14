@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import assets, { messagesDummyData } from "../assets/assets";
+import assets from "../assets/assets";
 import { ChevronLeft, Info } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { formatMessageTime } from "../lib/utils";
 import { useChatContext } from "../context/ChatContext";
 import toast from "react-hot-toast";
-import { image } from "motion/react-client";
+
 
 const ChatContainer = () => {
   const { navigate, authUser, onlineUsers } = useAppContext();

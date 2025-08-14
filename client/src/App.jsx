@@ -1,9 +1,7 @@
-import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
-import bgImage from "../src/assets/assets";
 import { Toaster } from "react-hot-toast";
 import { useAppContext } from "./context/AppContext";
 
