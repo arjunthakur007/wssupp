@@ -46,8 +46,6 @@ app.use(express.json({ limit: "4mb" }));
 app.use(cookieParser());
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 
-const port = process.env.PORT || 5000;
-
 await connectDB();
 await connectCloudinary();
 
@@ -56,6 +54,12 @@ app.get("/", (req, res) => res.send("API is Working"));
 app.use("/api/user", userRouter);
 app.use("/api/messages", messageRouter);
 
-server.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  const port = process.env.PORT || 5000;
+  server.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+  });
+}
+
+//Export server for vercel
+export default server;

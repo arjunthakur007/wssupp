@@ -14,7 +14,7 @@ const App = () => {
     return (
       <div
         className={
-          "bg-[url('./src/assets/bgImage.svg')] bg-center bg-cover min-h-screen flex items-center justify-center text-white text-xl font-bold"
+          "bg-[url('/bgImage.svg')] bg-center bg-cover min-h-screen flex items-center justify-center text-white text-xl font-bold"
         }
       >
         Loading...
@@ -23,9 +23,7 @@ const App = () => {
   }
 
   return (
-    <div
-      className={"bg-[url('./src/assets/bgImage.svg')] bg-center bg-contain"}
-    >
+    <div className={"bg-[url('/bgImage.svg')] bg-center bg-contain"}>
       <Toaster />
       <Routes>
         <Route
