@@ -84,37 +84,29 @@ import { Server } from "socket.io";
 const app = express();
 const server = http.createServer(app);
 
-// Allowed origins
+// Allowed origins (fallback to all for safety in dev)
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? ["https://quickchat-beige.vercel.app"] // production frontend
-    : ["http://localhost:5173"]; // dev frontend
+    ? ["https://quickchat-beige.vercel.app"]
+    : ["http://localhost:5173"];
 
-// Dynamic CORS config
+// CORS options
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps, curl)
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    return callback(new Error("CORS not allowed for this origin"), false);
+    if (!origin) return callback(null, true); // allow no-origin (e.g. curl, mobile)
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    console.warn(`Blocked by CORS: ${origin}`);
+    return callback(null, false); // don't crash, just reject
   },
   credentials: true,
 };
 
-// Apply CORS middleware globally (must be before routes)
+// Apply CORS globally
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions)); // handle preflight
 
 // Socket.io with same CORS
-export const io = new Server(server, {
-  cors: corsOptions,
-});
-
-// Store online users
+export const io = new Server(server, { cors: corsOptions });
 export const userSocketMap = {}; // { userId: socketId }
 
 // Socket.io connection handler
@@ -123,7 +115,6 @@ io.on("connection", (socket) => {
   console.log("User Connected", userId);
 
   if (userId) userSocketMap[userId] = socket.id;
-
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
   socket.on("disconnect", () => {
@@ -137,22 +128,29 @@ io.on("connection", (socket) => {
 app.use(express.json({ limit: "4mb" }));
 app.use(cookieParser());
 
-// Connect DB & Cloudinary
-await connectDB();
-await connectCloudinary();
-
 // Routes
 app.get("/", (req, res) => res.send("API is Working"));
 app.use("/api/user", userRouter);
 app.use("/api/messages", messageRouter);
 
-// Start server locally only
-if (process.env.NODE_ENV !== "production") {
-  const port = process.env.PORT || 5000;
-  server.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-  });
+// Start server + connect DB/Cloudinary
+async function startServer() {
+  try {
+    await connectDB();
+    await connectCloudinary();
+
+    if (process.env.NODE_ENV !== "production") {
+      const port = process.env.PORT || 5000;
+      server.listen(port, () => {
+        console.log(`Server running at http://localhost:${port}`);
+      });
+    }
+  } catch (err) {
+    console.error("Startup error:", err);
+    process.exit(1);
+  }
 }
 
-// Export for Vercel serverless
-export default server;
+startServer();
+
+export default server; // for Vercel
