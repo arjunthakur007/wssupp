@@ -14,9 +14,10 @@ const server = http.createServer(app);
 
 //Socket.io server initialize
 export const io = new Server(server, {
-  cors: { origin: "https://quickchat-beige.vercel.app" },
+  cors: {
+    origin: ["http://localhost:5173", "https://quickchat-beige.vercel.app"],
+  },
 });
-
 //Store online users
 export const userSocketMap = {}; //{ userId: socketId }
 
@@ -37,10 +38,9 @@ io.on("connection", (socket) => {
   });
 });
 
-
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://quickchat-beige.vercel.app", 
+  "https://quickchat-beige.vercel.app",
 ];
 
 //Middleware configuration
