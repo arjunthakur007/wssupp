@@ -1,0 +1,36 @@
+# Dependency Directories
+/node_modules
+client/node_modules
+server/node_modules
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Build Output Directories
+/dist
+/build
+/out
+/public/build
+client/dist
+client/build
+client/out
+
+# Log Files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS and Editor Specific Files
+.DS_Store
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.npm
+
+# Test and coverage directories
+/coverage
+/.nyc_output
