@@ -8,14 +8,13 @@ import userRouter from "./routes/userRoutes.js";
 import cookieParser from "cookie-parser";
 import messageRouter from "./routes/messagesRoutes.js";
 import { Server } from "socket.io";
-import { log } from "console";
 
 const app = express();
 const server = http.createServer(app);
 
 //Socket.io server initialize
 export const io = new Server(server, {
-  cors: { origin: "*" },
+  cors: { origin: "https://quickchat-beige.vercel.app" },
 });
 
 //Store online users
@@ -38,8 +37,11 @@ io.on("connection", (socket) => {
   });
 });
 
-//Allow multiple origins
-const allowedOrigins = ["http://localhost:5173"];
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://quickchat-beige.vercel.app", 
+];
 
 //Middleware configuration
 app.use(express.json({ limit: "4mb" }));
