@@ -69,6 +69,7 @@
 
 
 
+
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
@@ -83,15 +84,32 @@ import { Server } from "socket.io";
 const app = express();
 const server = http.createServer(app);
 
-// Dynamic CORS origin check (allows any origin)
+// Allowed origins
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? ["https://quickchat-beige.vercel.app"] // production frontend
+    : ["http://localhost:5173"]; // dev frontend
+
+// Dynamic CORS config
 const corsOptions = {
   origin: (origin, callback) => {
-    callback(null, origin || true); // Allow requests with no origin (like mobile apps, curl)
+    // Allow requests with no origin (like mobile apps, curl)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("CORS not allowed for this origin"), false);
   },
   credentials: true,
 };
 
-// Socket.io setup
+// Apply CORS middleware globally (must be before routes)
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // handle preflight
+
+// Socket.io with same CORS
 export const io = new Server(server, {
   cors: corsOptions,
 });
@@ -118,7 +136,6 @@ io.on("connection", (socket) => {
 // Middleware
 app.use(express.json({ limit: "4mb" }));
 app.use(cookieParser());
-app.use(cors(corsOptions));
 
 // Connect DB & Cloudinary
 await connectDB();
@@ -129,7 +146,7 @@ app.get("/", (req, res) => res.send("API is Working"));
 app.use("/api/user", userRouter);
 app.use("/api/messages", messageRouter);
 
-// Start server
+// Start server locally only
 if (process.env.NODE_ENV !== "production") {
   const port = process.env.PORT || 5000;
   server.listen(port, () => {
@@ -137,6 +154,5 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-// Export for Vercel
+// Export for Vercel serverless
 export default server;
-
