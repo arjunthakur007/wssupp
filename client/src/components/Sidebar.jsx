@@ -12,7 +12,7 @@ const Sidebar = () => {
     selectedUser,
     setSelectedUser,
     unseenMessages, 
-    setUnseenMesssages,
+    setUnseenMessages,
   } = useChatContext();
 
   const [input, setInput] = useState(false);

@@ -1,5 +1,5 @@
-import "dotenv/config";
 import express from "express";
+import "dotenv/config";
 import cors from "cors";
 import http from "http";
 import connectDB from "./configs/db.js";
@@ -55,7 +55,7 @@ if (process.env.NODE_ENV !== "production") {
     console.log(`Server is running on http://localhost:${port}`);
   });
 }
-
+ 
 //Export server for vercel
 export default server;
   
