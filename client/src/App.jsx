@@ -7,6 +7,7 @@ import { useAppContext } from "./context/AppContext";
 
 const App = () => {
   const { authUser, loading } = useAppContext();
+  
 
   if (loading) {
     return (

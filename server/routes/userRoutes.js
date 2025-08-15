@@ -1,5 +1,5 @@
 import express from "express";
-import { isAuth, login, logout, register, updateProfile } from "../controllers/userController.js";
+import { isAuth, login, register, updateProfile } from "../controllers/userController.js";
 import authUser from "../middleware/authUser.js";
 
 
@@ -37,12 +37,6 @@ userRouter.get("/is-auth", authUser, isAuth)
 //Body   - none
 userRouter.put("/update-profile", authUser, updateProfile )
 
-// //Route  - "/api/user/logout"
-//Des    - for user registeration
-//Access - Public
-//Method - GET
-//Params - none
-//Body   - none
-userRouter.get("/logout", authUser, logout)
+
 
 export default userRouter;

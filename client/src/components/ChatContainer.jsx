@@ -6,7 +6,7 @@ import { formatMessageTime } from "../lib/utils";
 import { useChatContext } from "../context/ChatContext";
 import toast from "react-hot-toast";
 
-
+  
 const ChatContainer = () => {
   const { navigate, authUser, onlineUsers } = useAppContext();
   const { messages, selectedUser, setSelectedUser, sendMessage, getMessages } =

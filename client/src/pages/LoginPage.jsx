@@ -4,11 +4,15 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 
 const LoginPage = () => {
-  const { name, setName, bio, setBio, login } = useAppContext();
+  
+  const [name, setName] = useState("");
+  const [bio, setBio] = useState("");
   const [state, setState] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isDataSubmitted, setIsDataSubmitted] = useState(false);
+
+  const { login } = useAppContext();
 
   const onSubmitHandler = (event) => {
     event.preventDefault();

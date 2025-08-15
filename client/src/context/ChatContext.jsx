@@ -45,7 +45,7 @@ export const ChatContextProvider = ({ children }) => {
         messageData
       );
       if (data.success) {
-        // setMessages((prevMessages) => [...prevMessages, data.newMessage]);
+        setMessages((prevMessages) => [...prevMessages, data.newMessage]);
       } else {
         toast.error(error.message);
       }
@@ -57,28 +57,18 @@ export const ChatContextProvider = ({ children }) => {
     if (!socket || !authUser) return;
 
     socket.on("newMessage", (newMessage) => {
-      // If the incoming message is from the currently selected user, add it to the chat
+     
       if (selectedUser && newMessage.senderId === selectedUser._id) {
         newMessage.seen = true;
         setMessages((prevMessages) => [...prevMessages, newMessage]);
         axios.put(`/api/messages/mark/${newMessage._id}`);
-      }
-      // ✅ NEW: If the message is from the current user (sent by this client)
-      else if (
-        selectedUser &&
-        newMessage.senderId === authUser._id &&
-        newMessage.receiverId === selectedUser._id
-      ) {
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-      }
-      // If the message is from an unselected user, update the unseen message count
-      else {
+      } else {
         setUnseenMessages((prevUnseenMessages) => ({
           ...prevUnseenMessages,
           [newMessage.senderId]: prevUnseenMessages[newMessage.senderId]
             ? prevUnseenMessages[newMessage.senderId] + 1
             : 1,
-        }));
+        })); 
       }
     });
   };
@@ -90,7 +80,7 @@ export const ChatContextProvider = ({ children }) => {
   useEffect(() => {
     subscribeToMessages();
     return () => unsubscribeFromMessages();
-  }, [socket, selectedUser, authUser]);
+  }, [socket, selectedUser]);
 
   const value = {
     messages,

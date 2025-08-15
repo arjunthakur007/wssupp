@@ -3,9 +3,14 @@ import { ChevronLeft, ChevronRight, ImageIcon } from "lucide-react";
 import assets from "../assets/assets";
 import { useAppContext } from "../context/AppContext";
 const ProfilePage = () => {
-  const { navigate, name, setName, bio, setBio, authUser, updateProfile } =
-    useAppContext();
+
+  const { navigate, authUser, updateProfile } = useAppContext();
+
+  const [name, setName] = useState(authUser.name);
+  const [bio, setBio] = useState(authUser.bio);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  
 
   const handleSumbit = async (e) => {
     e.preventDefault();

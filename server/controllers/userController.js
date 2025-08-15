@@ -11,8 +11,8 @@ export const register = async (req, res) => {
       return res.json({ success: false, message: "Missing Details" });
     }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const user = await User.findOne({ email });
+    if (user) {
       return res.json({ success: false, message: "User already exists" });
     }
 
@@ -28,16 +28,11 @@ export const register = async (req, res) => {
 
     const token = generateToken(newUser._id);
 
-    res.cookie("token", token, {
-      httpOnly: true, //prevent javascript from accessing cookie
-      secure: process.env.NODE_ENV === "production", //Using secure cookies in production
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", //CSRF protection
-      maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiration time in m.s.
-    });
-    return res.json({
+    res.json({
       success: true,
-      userData: { email: newUser.email, name: newUser.name },
-      message: "Account created successfully",
+      userData: newUser,
+      token,
+      message: "Account Created Successfully",
     });
   } catch (error) {
     console.log(error.message);
@@ -56,33 +51,23 @@ export const login = async (req, res) => {
         message: "Email and password are required",
       });
     }
-    const user = await User.findOne({ email });
+    const userData = await User.findOne({ email });
 
-    if (!user) {
-      return res.json({ success: false, message: "Invalid email or password" });
-    }
+    const isPasswordCorect = await bcrypt.compare(password, userData.password);
 
-    // -----------Compare password--------
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    if (!isPasswordCorect) {
       return res.json({ success: false, message: "Invalid Credentials" });
     }
 
-    const token = generateToken(user._id);
+    const token = generateToken(userData._id);
 
-    res.cookie("token", token, {
-      httpOnly: true, //prevent javascript from accessing cookie
-      secure: process.env.NODE_ENV === "production", //Using secure cookies in production
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", //CSRF protection
-      maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiration time in m.s.
-    });
     return res.json({
       success: true,
-      user: { email: user.email, name: user.name },
+      userData,
+      token,
       message: "Login successfull",
     });
   } catch (error) {
-    console.log("DEBUG: Login API - Error caught:", error);
     console.log(error.message);
     res.json({ success: false, message: error.message });
   }
@@ -90,13 +75,7 @@ export const login = async (req, res) => {
 
 //Check-auth : /api/user/is-auth
 export const isAuth = async (req, res) => {
-  try {
-    const user = req.user;
-    return res.json({ success: true, user });
-  } catch (error) {
-    console.log(error.message);
-    res.json({ success: false, message: error.message });
-  }
+  res.json({ success: true, user: req.user });
 };
 
 // Update-Profile: /api/user/update
@@ -127,18 +106,4 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-//Logout user: /api/user/logot
 
-export const logout = async (req, res) => {
-  try {
-    res.clearCookie("token", {
-      httpOnly: true, //This flag means the cookie cannot be accessed via client-side JavaScript.
-      secure: process.env.NODE_ENV === "production", //This flag means the cookie will only be sent over HTTPS (secure) connections.
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // This flag controls how cookies are sent with cross-site requests.
-    });
-    return res.json({ success: true, message: "Logged Out" });
-  } catch (error) {
-    console.log(error.message);
-    res.json({ success: false, message: error.message });
-  }
-};

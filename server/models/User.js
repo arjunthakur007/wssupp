@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
     profilePic: { type: String, defaul: "" },
     bio: { type: String },
   },
-  { timestamps: true, minimize: false }
+  { timestamps: true }
 );
 
 const User = mongoose.models.user || mongoose.model("User", userSchema);

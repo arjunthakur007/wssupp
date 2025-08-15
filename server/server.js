@@ -5,24 +5,18 @@ import http from "http";
 import connectDB from "./configs/db.js";
 import connectCloudinary from "./configs/cloudinary.js";
 import userRouter from "./routes/userRoutes.js";
-import cookieParser from "cookie-parser";
 import messageRouter from "./routes/messagesRoutes.js";
 import { Server } from "socket.io";
 
 const app = express();
 const server = http.createServer(app);
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://quickchat-beige.vercel.app",
-];
-
 //Socket.io server initialize
 export const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
-    credentials: true,
-  },});
+    origin: "*",
+  },
+});
 //Store online users
 export const userSocketMap = {}; //{ userId: socketId }
 
@@ -45,8 +39,7 @@ io.on("connection", (socket) => {
 
 //Middleware configuration
 app.use(express.json({ limit: "4mb" }));
-app.use(cookieParser());
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.use(cors());  
 
 await connectDB();
 await connectCloudinary();
@@ -65,6 +58,4 @@ if (process.env.NODE_ENV !== "production") {
 
 //Export server for vercel
 export default server;
-
-
-
+  
