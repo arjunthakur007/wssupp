@@ -75,7 +75,7 @@ export const login = async (req, res) => {
 
 //Check-auth : /api/user/is-auth
 export const isAuth = async (req, res) => {
-  res.json({ success: true, user: req.user });
+  res.json({ success: true, userData: req.user });
 };
 
 // Update-Profile: /api/user/update
@@ -99,11 +99,9 @@ export const updateProfile = async (req, res) => {
         { new: true }
       );
     }
-    res.json({ success: true, user: updatedUser });
+    res.json({ success: true, userData: updatedUser });
   } catch (error) {
     console.log(error.message);
     res.json({ success: false, message: error.message });
   }
 };
-
-
