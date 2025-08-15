@@ -13,7 +13,7 @@ const app = express();
 const server = http.createServer(app);
 
 const allowedOrigins = [
-  "http://localhost:51734",
+  "http://localhost:5173",
   "https://quickchat-beige.vercel.app",
 ];
 
@@ -22,8 +22,7 @@ export const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
     credentials: true,
-  },
-});
+  },});
 //Store online users
 export const userSocketMap = {}; //{ userId: socketId }
 
